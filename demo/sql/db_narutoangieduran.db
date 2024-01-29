@@ -1,0 +1,166 @@
+
+/*crear base*/
+CREATE DATABASE db_naruto_angieduran;
+USE db_naruto_angieduran;
+/*drop database db_naruto_angieduran;
+
+/*crear tablas con sus llaves primarias y su llaves foraneas*/
+CREATE TABLE Mision(
+id int AUTO_INCREMENT primary key ,
+nombreMision VARCHAR(55),
+descripcion VARCHAR(55),
+rangoMision int,
+recompensa  enum('10 diamantes','20 diamantes','40 diamantes','50 diamantes','100 monedas de oro')
+
+);
+
+CREATE TABLE Ninja(
+id int AUTO_INCREMENT primary key,
+nombreNinja VARCHAR(55),
+rangoNinja int,
+aldea VARCHAR(55)
+);
+
+CREATE TABLE Habilidad(
+id_Ninja int,
+nombreHabilidad VARCHAR(55),
+descripcion VARCHAR(55),
+FOREIGN KEY (id_Ninja) REFERENCES Ninja(id)
+
+);
+
+CREATE TABLE MisionNinja(
+id_Ninja int,
+id_Mision int,
+fechaInicio Date,
+fechaFin Date,
+estado enum('completado','disponible'),
+FOREIGN KEY (id_Ninja) REFERENCES Ninja(id),
+FOREIGN KEY (id_Mision) REFERENCES Mision(id)
+
+);
+
+
+
+/*ingreso de datos para ninja*/
+
+
+INSERT INTO Ninja VALUES (1, 'ninjaKoon',2,"Konoha");
+INSERT INTO Ninja VALUES (2, 'ninjaHuanj',4,"Konoha");
+INSERT INTO Ninja VALUES (3, 'ninjaJan',8,"Konoha");
+INSERT INTO Ninja VALUES (4, 'ninjaFu',1,"campus");
+INSERT INTO Ninja VALUES (5, 'ninjaCobra',5,"Konoha");
+INSERT INTO Ninja VALUES (6, 'ninjaKey',6,"Konoha");
+
+
+/*ingreso de datos para Mision*/
+
+
+INSERT INTO Mision VALUES (1, 'misionUno', 'la mision del nivel principiante es combatir las fuerzas del mal ',2,"10 diamantes");
+INSERT INTO Mision VALUES (2, 'misionDos','la mision del nivel basico es combatir las fuerzas del mal ',4,"20 diamantes");
+INSERT INTO Mision VALUES (3,'misionTres', 'la mision del nivel medio es combatir las fuerzas del mal ',8,"40 diamantes");
+INSERT INTO Mision VALUES (4, 'misionCuatro','la mision del nivel alto es combatir las fuerzas del mal ',10,"50 diamantes");
+INSERT INTO Mision VALUES (5,'misionCinco', 'la mision del nivel dificil es combatir las fuerzas del mal ',12,"100 monedas de oro");
+
+
+/*Habilidad*/
+
+INSERT INTO Habilidad VALUES (1, 'espadachin','encargado de proteger su aldea');
+INSERT INTO Habilidad VALUES (2, 'ojo de alcon','liderar tropas');
+INSERT INTO Habilidad VALUES (3, 'karateka nato','el mejor de su publo');
+INSERT INTO Habilidad VALUES (4, 'espadachin','encargado de proteger su aldea');
+INSERT INTO Habilidad VALUES (5, 'ojo de alcon','liderar tropas');
+INSERT INTO Habilidad VALUES (6, 'karateka nato','el mejor de su publo');
+
+
+/*MisionNija*/
+
+INSERT INTO MisionNinja VALUES (1, 1,'2024-01-20','2024-01-21','completado');
+INSERT INTO MisionNinja VALUES (2, 2,'2024-01-20','2024-01-22','disponible');
+INSERT INTO MisionNinja VALUES (3, 3,'2024-01-15','2024-01-23','completado');
+INSERT INTO MisionNinja VALUES (4, 4,'2024-01-20','2024-01-24','disponible');
+INSERT INTO MisionNinja VALUES (5, 5,'2024-01-20','2024-01-25','completado');
+INSERT INTO MisionNinja VALUES (6, 1,'2024-01-19','2024-01-26','disponible');
+INSERT INTO MisionNinja VALUES (1, 1,'2024-01-19','2024-01-26','disponible');
+
+
+
+
+
+
+/* consultas*/
+
+	select Ninja.nombreNinja as nombre , Habilidad.descripcion as estado
+	from Ninja
+	Inner join Habilidad on Habilidad.id_Ninja =  Ninja.id;
+
+
+	select Ninja.nombreNinja as nombre , MisionNinja.estado as disponible
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	where nombreNinja = "ninjaFu"; 
+
+
+	select Ninja.nombreNinja as nombre , MisionNinja.estado as disponible
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	where nombreNinja = "ninjaKoon"; 
+
+
+	select Ninja.nombreNinja as nombre , Mision.rangoMision as rango
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	inner join Mision on MisionNinja.id_Ninja = Mision.id
+	where nombreNinja = "ninjaKoon";
+
+
+/*verificar si esta disponible */
+select Ninja.nombreNinja as nombre , Mision.descripcion as descripcion
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	inner join Mision on MisionNinja.id_Ninja = Mision.id
+	where nombreNinja = "ninjaKoon" and rangoMision= 8 ;
+
+/* verificar si se completo */
+select Ninja.nombreNinja as nombre , Mision.descripcion as descripcion ,MisionNinja.estado as estado
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	inner join Mision on MisionNinja.id_Ninja = Mision.id
+	where nombreNinja = "ninjaKoon" and rangoMision= 2 ;
+
+
+/*verificar ya las misiones que tiene*/
+
+select Ninja.nombreNinja as nombre , Mision.descripcion as descripcion ,MisionNinja.estado as estado
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	inner join Mision on MisionNinja.id_Ninja = Mision.id
+	where nombreNinja = "ninjaKoon" ;
+
+
+
+select Ninja.nombreNinja as nombre , Mision.descripcion as descripcion ,MisionNinja.estado as estado
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	inner join Mision on MisionNinja.id_Ninja = Mision.id
+	where nombreNinja = "ninjaKoon" and estado = "completado" ;
+
+	/*mision completada por fecha*/
+
+	select Ninja.nombreNinja as nombre , MisionNinja.fechaFin as descripcion ,MisionNinja.estado as estado
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	where fechaFin = "2024-01-25" and estado = "completado" ;
+
+
+
+
+
+	select Ninja.nombreNinja as nombre , MisionNinja.fechaFin as descripcion ,MisionNinja.estado as estado
+	from Ninja 
+	inner join MisionNinja on Ninja.id = MisionNinja.id_Ninja
+	where fechaFin = "2024-01-25" and estado = "completado" ;
+
+
+
+	
